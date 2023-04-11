@@ -6,15 +6,12 @@
 
 #include "SoftwareTimer.h"
 
-SoftwareTimer::SoftwareTimer() {
-    status = SOFTWARE_TIMER_STATUS_RUNNING;
-    interval = 0;
-    callback = nullptr;
-    callTime = 0;
-}
-
 SoftwareTimer::SoftwareTimer(unsigned long i, void(*function)()) {
-    status = SOFTWARE_TIMER_STATUS_RUNNING;
+    if (function) {
+        status = SOFTWARE_TIMER_STATUS_RUNNING;
+    } else {
+        status = SOFTWARE_TIMER_STATUS_STOPPED;
+    }
     interval = i;
     callback = function;
     callTime = 0;
@@ -27,6 +24,11 @@ SoftwareTimer::~SoftwareTimer() {
     
 void SoftwareTimer::attachFunction(void(*fun)()) {
     callback = fun;
+    if (!fun) {
+        status = SOFTWARE_TIMER_STATUS_ERROR;
+    } else if (status == SOFTWARE_TIMER_STATUS_ERROR) {
+        status = SOFTWARE_TIMER_STATUS_STOPPED;
+    }
 }
 
 void SoftwareTimer::setInterval(unsigned long i) {
@@ -41,30 +43,40 @@ void SoftwareTimer::tick() {
     if (status == SOFTWARE_TIMER_STATUS_RUNNING) {
         unsigned long now = millis();
         if (now - callTime >= interval) {
-            if (callback) {
-                (*callback)();
-            }
+            // callback is not null according to check in setter and constructor
+            (*callback)();
             callTime = now;
         }
     }
 }
 
-void SoftwareTimer::stop() {
+unsigned char SoftwareTimer::stop() {
     status = SOFTWARE_TIMER_STATUS_STOPPED;
+    return status;
 }
 
-void SoftwareTimer::pause() {
+unsigned char SoftwareTimer::pause() {
     status = SOFTWARE_TIMER_STATUS_PAUSED;
     // save elapsed time
     callTime = millis() - callTime;
+    return status;
 }
 
-void SoftwareTimer::resume() {
-    if (status == SOFTWARE_TIMER_STATUS_PAUSED) {
-        // restore elapsed time
-        callTime = millis() - callTime;
+unsigned char SoftwareTimer::resume() {
+    if (callback) {
+        status = SOFTWARE_TIMER_STATUS_RUNNING;
+        if (status == SOFTWARE_TIMER_STATUS_PAUSED) {
+            // restore elapsed time
+            callTime = millis() - callTime;
+        } else {
+            callTime = millis();
+        }
     } else {
-        callTime = millis();
+        status = SOFTWARE_TIMER_STATUS_ERROR;
     }
-    status = SOFTWARE_TIMER_STATUS_RUNNING;
+    return status;
+}
+
+unsigned char SoftwareTimer::getStatus() {
+    return status;
 }

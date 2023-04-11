@@ -12,6 +12,7 @@
 #define SOFTWARE_TIMER_STATUS_STOPPED 0
 #define SOFTWARE_TIMER_STATUS_PAUSED 1
 #define SOFTWARE_TIMER_STATUS_RUNNING 2
+#define SOFTWARE_TIMER_STATUS_ERROR 3
 
 class SoftwareTimer {
 private:
@@ -20,17 +21,17 @@ private:
     void(*callback)() = nullptr;
     unsigned char status = SOFTWARE_TIMER_STATUS_STOPPED;
 
-public:   
-    SoftwareTimer();
-    SoftwareTimer(unsigned long interval, void(*function)() = nullptr);
+public:
+    SoftwareTimer(unsigned long interval = 0, void(*function)() = nullptr);
     ~SoftwareTimer();
     void attachFunction(void(*fun)());
     void setInterval(unsigned long i);
     unsigned long getInterval();
     void tick();
-    void stop();
-    void pause();
-    void resume();
+    unsigned char stop();
+    unsigned char pause();
+    unsigned char resume();
+    unsigned char getStatus();
 };
 
 #endif
