@@ -18,8 +18,8 @@ class SoftwareTimer {
 private:
     unsigned long interval;
     unsigned long callTime;
-    void(*callback)() = nullptr;
-    unsigned char status = SOFTWARE_TIMER_STATUS_STOPPED;
+    void(*callback)();
+    unsigned char status;
 
 public:
     SoftwareTimer(unsigned long interval = 0, void(*function)() = nullptr);
