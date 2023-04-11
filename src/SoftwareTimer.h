@@ -24,7 +24,7 @@ private:
 public:
     SoftwareTimer(unsigned long interval = 0, void(*function)() = nullptr);
     ~SoftwareTimer();
-    void attachFunction(void(*fun)());
+    unsigned char attachFunction(void(*fun)());
     void setInterval(unsigned long i);
     unsigned long getInterval();
     void tick();

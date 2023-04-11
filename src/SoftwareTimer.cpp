@@ -22,13 +22,14 @@ SoftwareTimer::~SoftwareTimer() {
     callback = nullptr;
 }
     
-void SoftwareTimer::attachFunction(void(*fun)()) {
+unsigned char SoftwareTimer::attachFunction(void(*fun)()) {
     callback = fun;
     if (!fun) {
         status = SOFTWARE_TIMER_STATUS_ERROR;
     } else if (status == SOFTWARE_TIMER_STATUS_ERROR) {
         status = SOFTWARE_TIMER_STATUS_STOPPED;
     }
+    return status;
 }
 
 void SoftwareTimer::setInterval(unsigned long i) {
