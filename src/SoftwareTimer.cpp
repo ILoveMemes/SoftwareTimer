@@ -65,13 +65,13 @@ unsigned char SoftwareTimer::pause() {
 
 unsigned char SoftwareTimer::resume() {
     if (callback) {
-        status = SOFTWARE_TIMER_STATUS_RUNNING;
         if (status == SOFTWARE_TIMER_STATUS_PAUSED) {
             // restore elapsed time
             callTime = millis() - callTime;
         } else {
             callTime = millis();
         }
+        status = SOFTWARE_TIMER_STATUS_RUNNING;
     } else {
         status = SOFTWARE_TIMER_STATUS_ERROR;
     }
